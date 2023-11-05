@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class JsonSerde;
 
 #define MAKE_PROPERTY(prop) property(#prop, prop)
@@ -52,4 +54,13 @@ struct property
         type = PropertyType::SERDE;
         ptr.json_serde = &json_serde;
     }
+};
+
+struct ConstProperty
+{
+    ConstProperty(const property &prop_in)
+        : prop{prop_in}
+    {
+    }
+    const property prop;
 };

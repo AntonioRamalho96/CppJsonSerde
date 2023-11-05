@@ -3,37 +3,75 @@
 
 namespace JsonSerdeStatics
 {
-    std::string ToJson(JsonSerde &obj)
+    void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer, const int &prop)
     {
-        return obj.Serialize();
+        writer.Int(prop);
     }
-
-    std::string ToJson(std::string &obj)
+    void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer, const bool &prop)
     {
-        return "\"" + obj + "\"";
+        writer.Bool(prop);
     }
-
-    std::string ToJson(bool &obj)
+    void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer, const std::string &prop)
     {
-        return obj ? "true" : "false";
+        writer.String(prop.c_str());
     }
-
-    std::string ToJson(int &obj)
+    void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer, const JsonSerde &prop)
     {
-        return std::to_string(obj);
+        prop.SerializeWithRapidJson(writer);
     }
-
-    std::string ToJson(property &property)
+    void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer, const property &prop)
     {
-        switch (property.type)
+        switch (prop.type)
         {
         case PropertyType::STRING:
-            return ToJson(*(property.ptr.str));
+            PlaceInWriter(writer, *(prop.ptr.str));
+            return;
         case PropertyType::BOOL:
-            return ToJson(*(property.ptr.bl));
+            PlaceInWriter(writer, *(prop.ptr.bl));
+            return;
         case PropertyType::SERDE:
-            return ToJson(*(property.ptr.json_serde));
+            PlaceInWriter(writer, *(prop.ptr.json_serde));
+            return;
+        case PropertyType::NUMBER:
+            PlaceInWriter(writer, *(prop.ptr.num));
+            return;
         }
-        return "ERROR";
+        throw;
+    }
+
+    void FromDocument(const rapidjson::Value &doc, const std::string &name, int &prop)
+    {
+        prop = doc[name.c_str()].GetInt();
+    }
+    void FromDocument(const rapidjson::Value &doc, const std::string &name, bool &prop)
+    {
+        prop = doc[name.c_str()].GetBool();
+    }
+    void FromDocument(const rapidjson::Value &doc, const std::string &name, std::string &prop)
+    {
+        prop = doc[name.c_str()].GetString();
+    }
+    void FromDocument(const rapidjson::Value &doc, const std::string &name, JsonSerde &prop)
+    {
+        prop.DeserializeWithRapidJson(doc[name.c_str()].GetObject());
+    }
+    void FromDocument(const rapidjson::Value &doc, property &prop)
+    {
+        switch (prop.type)
+        {
+        case PropertyType::STRING:
+            FromDocument(doc, prop.name, *(prop.ptr.str));
+            return;
+        case PropertyType::BOOL:
+            FromDocument(doc, prop.name, *(prop.ptr.bl));
+            return;
+        case PropertyType::SERDE:
+            FromDocument(doc, prop.name, *(prop.ptr.json_serde));
+            return;
+        case PropertyType::NUMBER:
+            FromDocument(doc, prop.name, *(prop.ptr.num));
+            return;
+        }
+        throw;
     }
 }

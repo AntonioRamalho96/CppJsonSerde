@@ -7,7 +7,7 @@ public:
     bool child;
     bool daughter;
 
-    std::vector<property> GetProperties() override
+    std::vector<property> DefineProperties() override
     {
         return {
             MAKE_PROPERTY(child),
@@ -22,7 +22,7 @@ public:
     std::string job;
     SubClass family;
 
-    std::vector<property> GetProperties() override
+    std::vector<property> DefineProperties() override
     {
         return {
             MAKE_PROPERTY(name),
@@ -44,4 +44,8 @@ int main()
     dude.job = "Developper";
     dude.family = family;
     std::cout << dude.Serialize() << std::endl;
+    std::string json_serialized{dude.Serialize()};
+    MyClass other;
+    other.Deserialize(json_serialized);
+    std::cout << other.Serialize() << std::endl;
 };
