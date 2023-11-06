@@ -1,0 +1,6 @@
+refactor statics to property members               (X)
+make pretty print optional argument                (X)
+add validation method (and to desserialize)        ( )
+extend to all numeric types                        ( )
+extend to arrays                                   ( )
+extend to maps                                     ( )

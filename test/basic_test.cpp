@@ -1,6 +1,6 @@
 #include "JsonSerde.hpp"
 #include <iostream>
-
+#include <cassert>
 class SubClass : public JsonSerde
 {
 public:
@@ -47,5 +47,5 @@ int main()
     std::string json_serialized{dude.Serialize()};
     MyClass other;
     other.Deserialize(json_serialized);
-    std::cout << other.Serialize() << std::endl;
+    assert(other.Serialize() == json_serialized);
 };
