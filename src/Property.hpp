@@ -42,4 +42,5 @@ struct property
     void PlaceInWriter(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
 
     void FromDocument(const rapidjson::Value &doc);
+    void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
 };

@@ -5,10 +5,13 @@
 #include "Property.hpp"
 #include "rapidjson/document.h"     // rapidjson's DOM-style API
 #include "rapidjson/prettywriter.h" // for stringify JSON
+#include "rapidjson/schema.h"       // For schema validation
 
 class JsonSerde
 {
 public:
+    JsonSerde &operator=(const JsonSerde &other);
+
     /**
      * @brief Serializes the object to a json string
      *
@@ -61,12 +64,28 @@ public:
      */
     const std::vector<property> &GetPropertiesConst() const;
 
+    /**
+     * @brief Returns the representation for the json schema of the present object
+     *
+     * @return std::string
+     */
+    std::string GetSchema() const;
+
+    bool IsValidAgainstSchema(const std::string &json, bool verbose = true);
+
 private:
     std::vector<property> m_properties{};
     bool m_properties_set{false};
 
+    bool m_schema_set = false;
+    std::unique_ptr<rapidjson::Document> m_schema{};
+
     void DeserializeWithRapidJson(const rapidjson::Value &doc);
     void SerializeWithRapidJson(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
     void SerializeWithRapidJson(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
+
+    const rapidjson::Document &GetSchemaDocument() const;
+    void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
+
     friend class property;
 };
