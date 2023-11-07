@@ -107,6 +107,7 @@ const rapidjson::Document &JsonSerde::GetSchemaDocument() const
         WriteSchema(writer);
         const_cast<JsonSerde *>(this)->m_schema = std::make_unique<rapidjson::Document>();
         const_cast<JsonSerde *>(this)->m_schema->Parse(sb.GetString());
+        const_cast<JsonSerde *>(this)->m_schema_set = true;
     }
     return *m_schema;
 }
