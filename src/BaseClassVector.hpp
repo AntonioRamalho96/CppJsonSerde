@@ -7,7 +7,7 @@ template <class BaseType>
 class BaseClassVector
 {
 public:
-    std::function<size_t() const> get_size;
+    std::function<size_t()> get_size;
     std::function<char *()> get_head;
     size_t element_size;
 
