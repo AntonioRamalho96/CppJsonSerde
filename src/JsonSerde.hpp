@@ -11,6 +11,8 @@ class JsonSerde
 {
 public:
     JsonSerde &operator=(const JsonSerde &other);
+    JsonSerde() = default;
+    JsonSerde(const JsonSerde &){};
 
     /**
      * @brief Serializes the object to a json string

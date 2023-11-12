@@ -99,3 +99,28 @@ TEST_F(SerdeTest, TestSchemaValidationFailDueToBadFieldInChildObject)
     MyClass antonio;
     EXPECT_FALSE(antonio.IsValidAgainstSchema(bad_json));
 }
+
+/*
+class AnotherObj : public JsonSerde
+{
+public:
+    std::vector<std::string> multi_names{};
+
+    std::vector<property> DefineProperties()
+    {
+        return {
+            MAKE_PROPERTY(multi_names)};
+    }
+};
+
+TEST_F(SerdeTest, TestClassWithArrays)
+{
+    AnotherObj source;
+    source.multi_names = {"Hello", "Goodbye"};
+    std::string serialized = source.Serialize();
+
+    AnotherObj receiver{};
+    receiver.Deserialize(serialized);
+
+    EXPECT_EQ(source.multi_names, receiver.multi_names);
+} */

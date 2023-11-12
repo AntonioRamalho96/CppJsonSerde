@@ -26,5 +26,8 @@ include(GoogleTest)
 add_executable(basic_test test/basic_test)
 gtest_discover_tests(basic_test)
 
-add_executable(base_class_vec_test test/base_class_vec_test)
-gtest_discover_tests(base_class_vec_test)
+add_executable(generic_vector_test test/generic_vector_test.cpp)
+gtest_discover_tests(generic_vector_test)
+
+add_executable(test_type test/test_type.cpp)
+gtest_discover_tests(test_type)
