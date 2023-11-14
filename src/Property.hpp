@@ -15,42 +15,54 @@ class JsonSerde;
 
 #define MAKE_PROPERTY(prop) std::move(property(#prop, prop))
 
-union PropertyPtr
-{
-    std::string *str;
-    bool *bl;
-    int *num;
-    JsonSerde *json_serde;
-    GenericVector *vector;
-};
-
 struct property
 {
     std::string name;
-    Type type;
-    PropertyPtr ptr;
+    PropertyType type;
 
-    explicit property(const std::string &name_arg, std::string &str);
+    // TODO make union
+    void *ptr;
+    GenericVector vec;
 
-    explicit property(const std::string &name_arg, bool &bl);
+    property &operator=(const property &other)
+    {
+        name = other.name;
+        type = other.type;
+        if (type == PropertyType::VECTOR)
+            vec = other.vec;
+        else
+            ptr = other.ptr;
+        return *this;
+    }
 
-    explicit property(const std::string &name_arg, int &num);
-
-    explicit property(const std::string &name_arg, JsonSerde &json_serde);
+    template <typename SimpleType>
+    property(const std::string &name_arg, SimpleType &arg) : name{name_arg}, type{Type(&arg).type}, ptr{(void *)(&arg)} {}
 
     template <class ElementType>
     property(const std::string &name_arg, std::vector<ElementType> &stuff_vector)
     {
         name = name_arg;
-        type = Type(&stuff_vector);
-        ptr.vector = new GenericVector(stuff_vector);
+        type = Type(&stuff_vector).type;
+        vec = GenericVector(stuff_vector);
     }
-
-    ~property();
 
     void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
     void PlaceInWriter(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
 
     void FromDocument(const rapidjson::Value &doc);
     void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
+
+    ~property() = default;
+
+private:
+    static void PlaceInWriterStatic(const PropertyType &type, const void *ptr, rapidjson::Writer<rapidjson::StringBuffer> &writer);
+    static void PlaceInWriterStatic(const PropertyType &type, const void *ptr, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer);
+    static void PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::Writer<rapidjson::StringBuffer> &writer);
+    static void PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer);
+
+    static void FromDocumentStatic(const PropertyType &type, void *ptr, const rapidjson::Value &param);
+    static void FromDocumentStatic(GenericVector &vec, const rapidjson::Value &param);
+
+    static void WriteSchemaStatic(const GenericVector &vec, rapidjson::Writer<rapidjson::StringBuffer> &writer);
+    static void WriteSchemaStatic(const PropertyType &type, void *ptr, rapidjson::Writer<rapidjson::StringBuffer> &writer);
 };

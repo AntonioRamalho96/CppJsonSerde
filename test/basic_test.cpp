@@ -100,7 +100,6 @@ TEST_F(SerdeTest, TestSchemaValidationFailDueToBadFieldInChildObject)
     EXPECT_FALSE(antonio.IsValidAgainstSchema(bad_json));
 }
 
-/*
 class AnotherObj : public JsonSerde
 {
 public:
@@ -116,11 +115,58 @@ public:
 TEST_F(SerdeTest, TestClassWithArrays)
 {
     AnotherObj source;
+    source.DefineProperties();
     source.multi_names = {"Hello", "Goodbye"};
     std::string serialized = source.Serialize();
-
+    std::cout << serialized << std::endl;
     AnotherObj receiver{};
     receiver.Deserialize(serialized);
 
     EXPECT_EQ(source.multi_names, receiver.multi_names);
-} */
+}
+
+class ObjWithVectorOfVectors : public JsonSerde
+{
+public:
+    std::vector<std::vector<std::string>> multi_names{};
+
+    std::vector<property> DefineProperties()
+    {
+        return {
+            MAKE_PROPERTY(multi_names)};
+    }
+};
+
+TEST_F(SerdeTest, TestClassWithArraysOfArrays)
+{
+    ObjWithVectorOfVectors source;
+    source.DefineProperties();
+    source.multi_names = {{"Hello", "Goodbye"}, {"Yes", "No"}};
+    std::string serialized = source.Serialize();
+    std::cout << serialized << std::endl;
+    ObjWithVectorOfVectors receiver{};
+    receiver.Deserialize(serialized);
+
+    EXPECT_EQ(source.multi_names.size(), 2);
+    EXPECT_EQ(source.multi_names.size(), receiver.multi_names.size());
+    EXPECT_EQ(source.multi_names, receiver.multi_names);
+}
+
+class ComplexSchemaObject : public JsonSerde
+{
+public:
+    std::string name{};
+    std::vector<std::vector<ObjWithVectorOfVectors>> multi_names{};
+
+    std::vector<property> DefineProperties()
+    {
+        return {
+            MAKE_PROPERTY(name),
+            MAKE_PROPERTY(multi_names)};
+    }
+};
+
+TEST_F(SerdeTest, TestComplexSchema)
+{
+    std::cout << ComplexSchemaObject().GetSchema() << std::endl;
+}
