@@ -107,7 +107,6 @@ private:
     void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
 
     void GetRapidjsonDocument(const std::string &json, bool validate_with_schema, rapidjson::Document &out_doc) const;
-    void GetRapidjsonDocumentValidatingAgainstSchema(const std::string &json, rapidjson::Document &out_doc) const;
 
     friend class property;
 };

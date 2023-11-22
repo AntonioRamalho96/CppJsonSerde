@@ -130,45 +130,34 @@ JsonSerde &JsonSerde::operator=(const JsonSerde &other)
 void JsonSerde::GetRapidjsonDocument(const std::string &json, bool validate_with_schema, rapidjson::Document &out_doc) const
 {
     using namespace rapidjson;
-    if (validate_with_schema)
-        GetRapidjsonDocumentValidatingAgainstSchema(json, out_doc);
-    else
-    {
-
-        if (out_doc.Parse(json.c_str()).HasParseError())
-        {
-            // TODO check if it is a valid json
-            throw;
-        }
-    }
-}
-
-void JsonSerde::GetRapidjsonDocumentValidatingAgainstSchema(const std::string &json, rapidjson::Document &out_doc) const
-{
-    using namespace rapidjson;
     StringStream ss{json.c_str()};
     SchemaDocument schema{GetSchemaDocument()};
     SchemaValidatingReader<kParseDefaultFlags, StringStream, UTF8<>> reader(ss, schema);
     out_doc.Populate(reader);
     if (!reader.GetParseResult())
+    {
         if (!reader.IsValid())
+        {
+            if (!validate_with_schema) // Check if schema should be disregarded
+                return;
             throw InvalidSchemaException(reader);
+        }
         else
             throw InvalidJsonException("The parsed json was not valid"); // TODO implement
+    }
 }
 
 void JsonSerde::ValidateAgainstSchema(const std::string &json) const
 {
     rapidjson::Document unused;
-    GetRapidjsonDocumentValidatingAgainstSchema(json, unused);
+    GetRapidjsonDocument(json, true, unused);
 }
 
 bool JsonSerde::IsValidAgainstSchema(const std::string &json, bool verbose) const noexcept
 {
-    rapidjson::Document unused;
     try
     {
-        GetRapidjsonDocumentValidatingAgainstSchema(json, unused);
+        ValidateAgainstSchema(json);
     }
     catch (const JsonSerdeExcption &e)
     {
