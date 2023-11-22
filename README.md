@@ -55,7 +55,7 @@ int main()
 
 ## More features
 
-We support schema generation and schema validation. The full documentation can be found [here](./docs/html/index.html).
+We support schema generation and schema validation. The full documentation can be found [here](./html_docs/index.html).
 
 ## Supported types
 
