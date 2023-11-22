@@ -31,3 +31,6 @@ gtest_discover_tests(generic_vector_test)
 
 add_executable(test_type test/test_type.cpp)
 gtest_discover_tests(test_type)
+
+add_executable(schema_validation_test test/schema_validation_test.cpp)
+gtest_discover_tests(schema_validation_test)

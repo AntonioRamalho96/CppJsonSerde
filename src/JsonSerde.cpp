@@ -1,5 +1,9 @@
 #include "JsonSerde.hpp"
 #include "rapidjson/prettywriter.h" // for stringify JSON
+#include "rapidjson/filereadstream.h"
+
+#include "exceptions/InvalidSchemaException.hpp"
+#include "exceptions/InvalidJsonException.hpp"
 
 std::string JsonSerde::MakePretty(const std::string &json)
 {
@@ -19,10 +23,11 @@ std::string JsonSerde::Serialize(bool pretty) const
         return MakePretty(sb.GetString());
     return sb.GetString();
 }
-void JsonSerde::Deserialize(const std::string &json)
+void JsonSerde::Deserialize(const std::string &json, bool validate)
 {
-    rapidjson::Document document;
-    document.Parse(json.c_str());
+    using namespace rapidjson;
+    Document document;
+    GetRapidjsonDocument(json, validate, document);
     DeserializeWithRapidJson(document);
 }
 
@@ -112,9 +117,39 @@ const rapidjson::Document &JsonSerde::GetSchemaDocument() const
 
 JsonSerde &JsonSerde::operator=(const JsonSerde &other)
 {
-    // DO NOT copy properties or property is set
+    // DO NOT copy anything!
     // Copying properties would make the properties of the
     // assigned to object to point to the assigned from object properties
     // I am also not copying the schema because I am lazy, feel free to change
     return *this;
+}
+
+void JsonSerde::GetRapidjsonDocument(const std::string &json, bool validate_with_schema, rapidjson::Document &out_doc) const
+{
+    using namespace rapidjson;
+    if (validate_with_schema)
+        GetRapidjsonDocumentValidatingAgainstSchema(json, out_doc);
+    else
+    {
+
+        if (out_doc.Parse(json.c_str()).HasParseError())
+        {
+            // TODO check if it is a valid json
+            throw;
+        }
+    }
+}
+
+void JsonSerde::GetRapidjsonDocumentValidatingAgainstSchema(const std::string &json, rapidjson::Document &out_doc) const
+{
+    using namespace rapidjson;
+    StringStream ss{json.c_str()};
+    SchemaDocument schema{GetSchemaDocument()};
+    SchemaValidatingReader<kParseDefaultFlags, StringStream, UTF8<>> reader(ss, schema);
+    out_doc.Populate(reader);
+    if (!reader.GetParseResult())
+        if (!reader.IsValid())
+            throw InvalidSchemaException(reader);
+        else
+            throw InvalidJsonException("The parsed json was not valid"); // TODO implement
 }

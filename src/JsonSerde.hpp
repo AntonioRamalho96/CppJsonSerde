@@ -26,7 +26,7 @@ public:
      *
      * @param json string wirth the json representation of the object
      */
-    virtual void Deserialize(const std::string &json);
+    virtual void Deserialize(const std::string &json, bool validate = true);
 
     /**
      * @brief The child class must implement to state which are its properties, for example:
@@ -88,6 +88,9 @@ private:
 
     const rapidjson::Document &GetSchemaDocument() const;
     void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
+
+    void GetRapidjsonDocument(const std::string &json, bool validate_with_schema, rapidjson::Document &out_doc) const;
+    void GetRapidjsonDocumentValidatingAgainstSchema(const std::string &json, rapidjson::Document &out_doc) const;
 
     friend class property;
 };
