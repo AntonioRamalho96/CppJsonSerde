@@ -5,8 +5,8 @@
 #include <memory>
 #include <functional>
 
-#include "rapidjson/document.h"     // rapidjson's DOM-style API
-#include "rapidjson/prettywriter.h" // for stringify JSON
+#include "rapidjson/document.h" // rapidjson's DOM-style API
+#include "rapidjson/writer.h"
 
 #include "GenericVector.hpp"
 #include "Type.hpp"
@@ -47,7 +47,6 @@ struct property
     }
 
     void PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
-    void PlaceInWriter(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
 
     void FromDocument(const rapidjson::Value &doc);
     void WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
@@ -56,9 +55,7 @@ struct property
 
 private:
     static void PlaceInWriterStatic(const PropertyType &type, const void *ptr, rapidjson::Writer<rapidjson::StringBuffer> &writer);
-    static void PlaceInWriterStatic(const PropertyType &type, const void *ptr, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer);
     static void PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::Writer<rapidjson::StringBuffer> &writer);
-    static void PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer);
 
     static void FromDocumentStatic(const PropertyType &type, void *ptr, const rapidjson::Value &param);
     static void FromDocumentStatic(GenericVector &vec, const rapidjson::Value &param);

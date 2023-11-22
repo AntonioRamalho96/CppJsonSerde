@@ -25,26 +25,6 @@ void property::PlaceInWriterStatic(const PropertyType &type, const void *ptr, ra
     throw;
 }
 
-void property::PlaceInWriterStatic(const PropertyType &type, const void *ptr, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer)
-{
-    switch (type)
-    {
-    case PropertyType::STRING:
-        writer.String(((const std::string *)ptr)->c_str());
-        return;
-    case PropertyType::BOOL:
-        writer.Bool(*(const bool *)(ptr));
-        return;
-    case PropertyType::SERDE:
-        ((const JsonSerde *)ptr)->SerializeWithRapidJson(writer);
-        return;
-    case PropertyType::NUMBER:
-        writer.Int(*((const int *)ptr));
-        return;
-    }
-    throw;
-}
-
 void property::PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::Writer<rapidjson::StringBuffer> &writer)
 {
     PropertyType element_type = vec.element_type.type;
@@ -58,28 +38,7 @@ void property::PlaceInWriterStatic(const PropertyType &type, const GenericVector
     writer.EndArray();
 }
 
-void property::PlaceInWriterStatic(const PropertyType &type, const GenericVector &vec, rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer)
-{
-    PropertyType element_type = vec.element_type.type;
-    size_t size = vec.GetSize();
-    writer.StartArray();
-    for (int i = 0; i < size; i++)
-        if (element_type != PropertyType::VECTOR)
-            PlaceInWriterStatic(element_type, vec.Get(i), writer);
-        else
-            PlaceInWriterStatic(element_type, vec.GetGenericVector(i), writer);
-    writer.EndArray();
-}
-
 void property::PlaceInWriter(rapidjson::Writer<rapidjson::StringBuffer> &writer) const
-{
-    if (type == PropertyType::VECTOR)
-        PlaceInWriterStatic(this->type, this->vec, writer);
-    else
-        PlaceInWriterStatic(this->type, this->ptr, writer);
-}
-
-void property::PlaceInWriter(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const
 {
     if (type == PropertyType::VECTOR)
         PlaceInWriterStatic(this->type, this->vec, writer);

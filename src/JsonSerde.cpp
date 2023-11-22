@@ -1,4 +1,5 @@
 #include "JsonSerde.hpp"
+#include "rapidjson/prettywriter.h" // for stringify JSON
 
 std::string JsonSerde::MakePretty(const std::string &json)
 {

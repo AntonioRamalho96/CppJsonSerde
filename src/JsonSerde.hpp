@@ -3,9 +3,8 @@
 #include <vector>
 #include <memory>
 #include "Property.hpp"
-#include "rapidjson/document.h"     // rapidjson's DOM-style API
-#include "rapidjson/prettywriter.h" // for stringify JSON
-#include "rapidjson/schema.h"       // For schema validation
+#include "rapidjson/document.h" // rapidjson's DOM-style API
+#include "rapidjson/schema.h"   // For schema validation
 
 class JsonSerde
 {
