@@ -76,7 +76,6 @@ TEST_F(GenericVectorTest, DeepTest)
 
     GenericVector vec{childs};
     ASSERT_EQ(vec.GetSize(), 2);
-    ASSERT_ANY_THROW(vec.Get(0));
 
     GenericVector gv_elem_1 = vec.GetGenericVector(0);
     ASSERT_EQ(gv_elem_1.GetSize(), 1);

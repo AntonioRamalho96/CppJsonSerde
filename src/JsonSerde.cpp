@@ -1,19 +1,22 @@
 #include "JsonSerde.hpp"
 
+std::string JsonSerde::MakePretty(const std::string &json)
+{
+    rapidjson::Document document{};
+    document.Parse(json.c_str());
+    rapidjson::StringBuffer sb{};
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> pretty_writer(sb);
+    return sb.GetString();
+}
+
 std::string JsonSerde::Serialize(bool pretty) const
 {
     rapidjson::StringBuffer sb{};
+    rapidjson::Writer<rapidjson::StringBuffer> writer{sb};
+    SerializeWithRapidJson(writer);
     if (pretty)
-    {
-        rapidjson::PrettyWriter<rapidjson::StringBuffer> writer{sb};
-        SerializeWithRapidJson(writer);
-    }
-    else
-    {
-        rapidjson::Writer<rapidjson::StringBuffer> writer{sb};
-        SerializeWithRapidJson(writer);
-    }
-    return std::string(sb.GetString());
+        return MakePretty(sb.GetString());
+    return sb.GetString();
 }
 void JsonSerde::Deserialize(const std::string &json)
 {
@@ -28,22 +31,16 @@ void JsonSerde::DeserializeWithRapidJson(const rapidjson::Value &doc)
         prop.FromDocument(doc);
 }
 
-#define SERIALIZE_WITH_RAPIDJAOSN_BODY            \
-    writer.StartObject();                         \
-    for (const auto &prop : GetPropertiesConst()) \
-    {                                             \
-        writer.String(prop.name.c_str());         \
-        prop.PlaceInWriter(writer);               \
-    }                                             \
-    writer.EndObject();
-
-void JsonSerde::SerializeWithRapidJson(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const
+void JsonSerde::SerializeWithRapidJson(rapidjson::Writer<rapidjson::StringBuffer> &writer) const
 {
-    SERIALIZE_WITH_RAPIDJAOSN_BODY
+    writer.StartObject();
+    for (const auto &prop : GetPropertiesConst())
+    {
+        writer.String(prop.name.c_str());
+        prop.PlaceInWriter(writer);
+    }
+    writer.EndObject();
 }
-
-void JsonSerde::SerializeWithRapidJson(rapidjson::Writer<rapidjson::StringBuffer> &writer) const {
-    SERIALIZE_WITH_RAPIDJAOSN_BODY}
 
 // Returns a reference to the properties of the object
 std::vector<property> &JsonSerde::GetProperties()
@@ -92,7 +89,7 @@ std::string JsonSerde::GetSchema() const
 {
     using namespace rapidjson;
     StringBuffer sb;
-    PrettyWriter<StringBuffer> writer(sb);
+    Writer<StringBuffer> writer(sb);
     GetSchemaDocument().Accept(writer);
     return sb.GetString();
 }

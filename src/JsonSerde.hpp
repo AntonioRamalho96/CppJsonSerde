@@ -73,6 +73,8 @@ public:
      */
     std::string GetSchema() const;
 
+    static std::string MakePretty(const std::string &json);
+
     bool IsValidAgainstSchema(const std::string &json, bool verbose = true);
 
 private:
@@ -83,7 +85,6 @@ private:
     std::unique_ptr<rapidjson::Document> m_schema{};
 
     void DeserializeWithRapidJson(const rapidjson::Value &doc);
-    void SerializeWithRapidJson(rapidjson::PrettyWriter<rapidjson::StringBuffer> &writer) const;
     void SerializeWithRapidJson(rapidjson::Writer<rapidjson::StringBuffer> &writer) const;
 
     const rapidjson::Document &GetSchemaDocument() const;
