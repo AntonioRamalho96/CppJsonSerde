@@ -1,4 +1,7 @@
 #include "JsonSerde.hpp"
+
+#include <iostream>
+
 #include "rapidjson/prettywriter.h" // for stringify JSON
 #include "rapidjson/filereadstream.h"
 
@@ -152,4 +155,26 @@ void JsonSerde::GetRapidjsonDocumentValidatingAgainstSchema(const std::string &j
             throw InvalidSchemaException(reader);
         else
             throw InvalidJsonException("The parsed json was not valid"); // TODO implement
+}
+
+void JsonSerde::ValidateAgainstSchema(const std::string &json) const
+{
+    rapidjson::Document unused;
+    GetRapidjsonDocumentValidatingAgainstSchema(json, unused);
+}
+
+bool JsonSerde::IsValidAgainstSchema(const std::string &json, bool verbose) const noexcept
+{
+    rapidjson::Document unused;
+    try
+    {
+        GetRapidjsonDocumentValidatingAgainstSchema(json, unused);
+    }
+    catch (const JsonSerdeExcption &e)
+    {
+        if (verbose)
+            std::cout << e.what() << std::endl;
+        return false;
+    }
+    return true;
 }

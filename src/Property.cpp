@@ -63,46 +63,6 @@ void property::WriteSchema(rapidjson::Writer<rapidjson::StringBuffer> &writer) c
         WriteSchemaStatic(type, ptr, writer);
 }
 
-bool JsonSerde::IsValidAgainstSchema(const std::string &json, bool verbose)
-{
-    using namespace rapidjson;
-    // sd is no longer needed here.
-
-    // TODO refactor to separate method taht returns document
-    Document d;
-    if (d.Parse(json.c_str()).HasParseError())
-    {
-        // TODO replace for exception
-        if (verbose)
-        {
-            std::cout << "Provided string does not have a valid json format" << std::endl;
-        }
-        return false;
-    }
-
-    SchemaDocument schema(GetSchemaDocument()); // Compile a Document to SchemaDocument
-    SchemaValidator validator(schema);
-    if (!d.Accept(validator))
-    {
-        // TODO replace for exception
-        // Input JSON is invalid according to the schema
-        // Output diagnostic information
-        if (verbose)
-        {
-
-            StringBuffer sb;
-            validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
-            printf("Invalid schema: %s\n", sb.GetString());
-            printf("Invalid keyword: %s\n", validator.GetInvalidSchemaKeyword());
-            sb.Clear();
-            validator.GetInvalidDocumentPointer().StringifyUriFragment(sb);
-            printf("Invalid document: %s\n", sb.GetString());
-        }
-        return false;
-    }
-    return true;
-}
-
 void property::FromDocumentStatic(const PropertyType &type, void *ptr, const rapidjson::Value &param)
 {
     switch (type)

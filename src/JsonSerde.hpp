@@ -74,7 +74,24 @@ public:
 
     static std::string MakePretty(const std::string &json);
 
-    bool IsValidAgainstSchema(const std::string &json, bool verbose = true);
+    /**
+     * @brief Validates a json against the schema. If it is a malformed json it throws InvalidJsonexception,
+     * if there is a schema mismatch it throws InvalidSchemaException. It has no impact in the case the json
+     * matches the schema
+     *
+     * @param json json to validate
+     */
+    void ValidateAgainstSchema(const std::string &json) const;
+
+    /**
+     * @brief Determines if the input json schema matches the current class's schema
+     *
+     * @param json input json
+     * @param verbose in case of invalid, it prints the error to the console
+     * @return true if the json matches the schema
+     * @return false if the json is malformed or does not match the schema
+     */
+    bool IsValidAgainstSchema(const std::string &json, bool verbose = false) const noexcept;
 
 private:
     std::vector<property> m_properties{};

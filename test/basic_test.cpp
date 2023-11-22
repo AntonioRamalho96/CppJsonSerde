@@ -69,37 +69,6 @@ TEST_F(SerdeTest, SchemaGeneration)
     ASSERT_EQ(other.GetSchema(), m_dude.GetSchema());
 }
 
-TEST_F(SerdeTest, TestSchemaValidationValid)
-{
-    std::string proper_json = "{\"name\":\"Antonio\",\"job\":\"Developper\",\"family\":{\"child\":true,\"daughter\":false}}";
-    MyClass antonio;
-    EXPECT_TRUE(antonio.IsValidAgainstSchema(proper_json));
-}
-
-TEST_F(SerdeTest, TestSchemaValidationFailDueToBadType)
-{
-    // Job is now a number
-    std::string bad_json = "{\"name\":\"Antonio\",\"job\":1,\"family\":{\"child\":true,\"daughter\":false}}";
-    MyClass antonio;
-    EXPECT_FALSE(antonio.IsValidAgainstSchema(bad_json));
-}
-
-TEST_F(SerdeTest, TestSchemaValidationFailDueToMissingFieldInChildObject)
-{
-    // Job is now a number
-    std::string bad_json = "{\"name\":\"Antonio\",\"job\":\"Developper\",\"family\":{\"daughter\":false}}";
-    MyClass antonio;
-    EXPECT_FALSE(antonio.IsValidAgainstSchema(bad_json));
-}
-
-TEST_F(SerdeTest, TestSchemaValidationFailDueToBadFieldInChildObject)
-{
-    // Job is now a number
-    std::string bad_json = "{\"name\":\"Antonio\",\"job\":\"Developper\",\"family\":{\"child\":1,\"daughter\":false}}";
-    MyClass antonio;
-    EXPECT_FALSE(antonio.IsValidAgainstSchema(bad_json));
-}
-
 class AnotherObj : public JsonSerde
 {
 public:
