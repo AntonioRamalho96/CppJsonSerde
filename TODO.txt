@@ -7,6 +7,7 @@ add tests for validation                           (X)
 extend to arrays                                   (X)
 write README.md                                    (X) 
 
+
 # Non prioritary
 extend to maps                                     ( )
 extend to all numeric types                        ( )
