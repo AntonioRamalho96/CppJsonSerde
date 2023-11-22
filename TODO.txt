@@ -1,9 +1,12 @@
 refactor statics to property members               (X)
 make pretty print optional argument                (X)
 add validation method                              (X)
-add proper error messages and exceptions           ( )
-Add validation to desserialize                     ( )
+add proper error messages and exceptions           (X)
+Add validation to desserialize                     (X)
 add tests for validation                           (X)
-extend to arrays                                   ( )
+extend to arrays                                   (X)
+write README.md                                    (X) 
+
+# Non prioritary
 extend to maps                                     ( )
 extend to all numeric types                        ( )
