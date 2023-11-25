@@ -21,6 +21,9 @@ void property::PlaceInWriterStatic(const PropertyType &type, const void *ptr, ra
     case PropertyType::NUMBER:
         writer.Int(*((const int *)ptr));
         return;
+    case PropertyType::DOUBLE:
+        writer.Double(*((const double *)ptr));
+        return;
     }
     throw;
 }
@@ -79,6 +82,9 @@ void property::FromDocumentStatic(const PropertyType &type, void *ptr, const rap
     case PropertyType::NUMBER:
         *((int *)ptr) = param.GetInt();
         return;
+    case PropertyType::DOUBLE:
+        *((double *)ptr) = param.GetDouble();
+        return;
     }
     throw std::runtime_error("Unnexpected behaviour, unknown type");
 }
@@ -102,7 +108,10 @@ void property::FromDocumentStatic(GenericVector &vec, const rapidjson::Value &ar
             ((JsonSerde *)vec.Get(i))->DeserializeWithRapidJson(array[i]);
             break;
         case PropertyType::NUMBER:
-            *((bool *)vec.Get(i)) = array[i].GetInt();
+            *((int *)vec.Get(i)) = array[i].GetInt();
+            break;
+        case PropertyType::DOUBLE:
+            *((double *)vec.Get(i)) = array[i].GetDouble();
             break;
         case PropertyType::VECTOR:
             aux_vec = vec.GetGenericVector(i);
@@ -153,6 +162,9 @@ void property::WriteSchemaStatic(const PropertyType &type, void *ptr, rapidjson:
         break;
     case PropertyType::NUMBER:
         ADD_SIMPLE_TYPE_SCHEME("integer")
+        break;
+    case PropertyType::DOUBLE:
+        ADD_SIMPLE_TYPE_SCHEME("number")
         break;
     default:
         throw;

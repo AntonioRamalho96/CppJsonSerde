@@ -11,6 +11,7 @@ enum PropertyType
     STRING,
     BOOL,
     NUMBER,
+    DOUBLE,
     SERDE,
     VECTOR
 };
@@ -45,6 +46,10 @@ public:
     Type(const int *)
     {
         type = PropertyType::NUMBER;
+    }
+    Type(const double *)
+    {
+        type = PropertyType::DOUBLE;
     }
     Type(const JsonSerde *)
     {
