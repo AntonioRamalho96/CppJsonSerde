@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(JsonSerde)
 
 include_directories(src rapidjson/include)
+add_compile_options(-fPIC)
 add_library(${PROJECT_NAME} src/Property.cpp
     src/JsonSerde.cpp)
 
