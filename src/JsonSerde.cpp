@@ -14,6 +14,7 @@ std::string JsonSerde::MakePretty(const std::string &json)
     document.Parse(json.c_str());
     rapidjson::StringBuffer sb{};
     rapidjson::PrettyWriter<rapidjson::StringBuffer> pretty_writer(sb);
+    document.Accept(pretty_writer);
     return sb.GetString();
 }
 
